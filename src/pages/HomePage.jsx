@@ -1,7 +1,7 @@
 import Typography from "./../components/typography";
 import { Input } from "./../components/input";
 import { Button } from "./../components/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { searchUsers } from "../api/github";
 import useDebounce from "../hooks/debounce";
@@ -10,6 +10,7 @@ const HomePage = () => {
   const [username, setUsername] = useState("");
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
+  const [retryTime, setRetryTime] = useState(60);
   // console.log("Page:", page);
   // console.log("Total Pages:", totalPage);
 
@@ -40,6 +41,22 @@ const HomePage = () => {
   // console.log("IsError:", isError);
   // console.log("Error:", error);
 
+  useEffect(() => {
+    // If there is no rate limit error, reset retryTime and do nothing
+    if (!error?.message?.includes(`API rate limit exceeded`)) {
+      setRetryTime(60);
+      return;
+    }
+
+    // Start a 1-second countdown when rate limit error occurs
+    const intervalId = setInterval(() => {
+      setRetryTime((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+
+    // Cleanup the interval when error changes or component unmounts
+    return () => clearInterval(intervalId);
+  }, [error]);
+
   // Mutations
   const mutation = useMutation({
     mutationFn: () => searchUsers(username, page),
@@ -62,17 +79,18 @@ const HomePage = () => {
         </Typography>
         <div className="flex w-full gap-4 justify-center">
           <Input
-            placeholder="Search for users or repositories..."
+            placeholder="Search for users by name/username..."
             type="text"
             className="min-w-2xs"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
-          <Button onClick={() => mutation.mutate()}>Search</Button>
+          <Button onClick={() => mutation.mutate()} disabled={!isError}>Search</Button>
         </div>
         <div>
           {username && (
-            <Typography variant="p">Searching for: {username}</Typography>
+            <Typography variant="p" className="">Searching for:
+            <span className="max-w-xs inline-block truncate align-middle" title={username}>&nbsp;{username}</span></Typography>
           )}
         </div>
       </div>
@@ -82,8 +100,8 @@ const HomePage = () => {
           <div className="flex flex-col items-center justify-center w-full md:w-2xl gap-6 bg-amber-50/35 rounded-md p-2">
             {isPending && <Typography variant="p">Loading...</Typography>}
             {isError && (
-              <Typography variant="p">
-                An error occurred: {error?.message.includes(`API rate limit exceeded`) ? "Please try again in 2 mins" : error?.message}
+              <Typography variant="p" className="text-center">
+                An error occurred: {error?.message.includes(`API rate limit exceeded`) ? `Please try again in ${retryTime} seconds by clicking the search button` : error?.message}
               </Typography>
             )}
             {data && data.total_count === 0 && (
