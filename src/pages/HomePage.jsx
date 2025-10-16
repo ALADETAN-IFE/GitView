@@ -52,7 +52,7 @@ const HomePage = () => {
 
   const gitUsers = data?.items || [];
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className="flex flex-col justify-center items-center gap-4">
       <div className="flex flex-col items-center justify-center max-w-2xl gap-6">
         <Typography variant="h1" className="text-center">GitView: A GitHub Explorer</Typography>
         <Typography variant="p" className="text-center">
@@ -79,7 +79,7 @@ const HomePage = () => {
       {isPending ||
         isError ||
         data?.total_count >= 0 ? (
-          <div className="flex flex-col items-center justify-center w-2xl gap-6 bg-amber-50/35 rounded-md p-2">
+          <div className="flex flex-col items-center justify-center w-full md:w-2xl gap-6 bg-amber-50/35 rounded-md p-2">
             {isPending && <Typography variant="p">Loading...</Typography>}
             {isError && (
               <Typography variant="p">
