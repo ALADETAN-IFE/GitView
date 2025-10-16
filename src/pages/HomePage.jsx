@@ -73,8 +73,8 @@ const HomePage = () => {
       <div className="flex flex-col items-center justify-center max-w-2xl gap-6">
         <Typography variant="h1" className="text-center">GitView: A GitHub Explorer</Typography>
         <Typography variant="p" className="text-center">
-          A modern GitHub user and repository explorer built with **React
-          Query**, optimized for API caching, background refetching, and fast
+          A modern GitHub user and repository explorer built with <b className="text-blue-500">React
+          Query</b>, optimized for API caching, background refetching, and fast
           performance.
         </Typography>
         <div className="flex w-full gap-4 justify-center">
