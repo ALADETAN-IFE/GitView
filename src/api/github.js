@@ -1,13 +1,12 @@
 import axios from "axios";
 
 export const searchUsers = async (query, page) => {
-    console.log("Searching for users with query:", query, "on page:", page);
+    // console.log("Searching for users with query:", query, "on page:", page);
     if (!query || query?.trim() === "") return [];
     try {
         // const response = await axios.get(`https://api.github.com/search/users?q=${query}&per_page=10&page=${page}`)
         // inside searchUsers
         const safePage = Math.max(1, Number(page) || 1);
-        console.log("Safe Page:", safePage);
         const params = { q: query, per_page: 10, page: safePage };
         const response = await axios.get('https://api.github.com/search/users', { params });
         return response.data

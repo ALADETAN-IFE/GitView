@@ -10,8 +10,8 @@ const HomePage = () => {
   const [username, setUsername] = useState("");
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
-  console.log("Page:", page);
-  console.log("Total Pages:", totalPage);
+  // console.log("Page:", page);
+  // console.log("Total Pages:", totalPage);
 
   // Debounce the username input to limit API calls on every keystroke
   const debouncedUsername = useDebounce(username, 500);
@@ -25,7 +25,7 @@ const HomePage = () => {
   queryFn: async () => { 
     return searchUsers(debouncedUsername, page).then((data) => {
       setTimeout(() => setTotalPage(Math.ceil(data?.total_count / 10)), 1000);
-      console.log("Fetched Data:", data); 
+      // console.log("Fetched Data:", data); 
       return data;
     });
   },
@@ -36,8 +36,8 @@ const HomePage = () => {
       }
     }
   });
-  console.log("IsError:", isError);
-  console.log("Error:", error);
+  // console.log("IsError:", isError);
+  // console.log("Error:", error);
 
   // Mutations
   const mutation = useMutation({
