@@ -152,6 +152,31 @@ Components can be customized in several ways:
 
 These components assume you have React, TypeScript, and Tailwind CSS already set up in your project. Simply copy the component files into your project and import them as needed.
 
+## 🚀 Quick Start
+
+Follow these steps to get the project running locally.
+
+```bash
+# Clone repository
+git clone https://github.com/ALADETAN-IFE/components.git
+cd components
+
+# Install project dependencies
+npm install
+
+# If you have a cached submodule reference you want to remove (keeps working-tree files):
+git rm --cached src/components
+
+# Add styles: copy the contents of style.css into your app's index (or import it)
+# (e.g., import './style.css' in your index.tsx / index.js)
+
+# Run the development server
+npm run dev
+```
+
+Notes:
+- These components assume you already have a React + TypeScript + Tailwind setup in your app. If not, set those up first.
+
 ## Contributing
 
 When adding new components or modifying existing ones:
