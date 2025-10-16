@@ -22,7 +22,13 @@ const HomePage = () => {
   // Queries
   const { isPending, isError, data, error } = useQuery({
   queryKey: ["usernameFetch", debouncedUsername],
-  queryFn: () => searchUsers(debouncedUsername, page),
+  queryFn: async () => { 
+    return searchUsers(debouncedUsername, page).then((data) => {
+      setTimeout(() => setTotalPage(Math.ceil(data?.total_count / 10)), 1000);
+      console.log("Fetched Data:", data); 
+      return data;
+    });
+  },
     // enabled: !!username, // Only run the query if username is not empty
     onSuccess: (data) => {
       if (data && data.total_count) {
@@ -35,16 +41,15 @@ const HomePage = () => {
 
   // Mutations
   const mutation = useMutation({
-    mutationFn: () => searchUsers(username, page),
+    mutationFn: () => searchUsers(debouncedUsername, page),
     onSuccess: () => {
       // Invalidate and refetch
       queryClient.invalidateQueries({ queryKey: ["usernameFetch"] });
     },
   });
 
-  setTotalPage(Math.ceil(data?.total_count / 10))
 
-  const gitUsers = data?.items?.slice((page - 1) * 10, page * 10);
+  const gitUsers = data?.items || [];
   return (
     <div className="flex flex-col justify-center items-center">
       <div className="flex flex-col items-center justify-center max-w-2xl gap-6">
@@ -77,7 +82,7 @@ const HomePage = () => {
             {isPending && <Typography variant="p">Loading...</Typography>}
             {isError && (
               <Typography variant="p">
-                An error occurred: {error?.message == `API rate limit exceeded for 129.205.124.211. (But here's the good news: Authenticated requests get a higher rate limit. Check out the documentation for more details.)` ? "Please try again in 2 mins" : error?.message}
+                An error occurred: {error?.message.includes(`API rate limit exceeded`) ? "Please try again in 2 mins" : error?.message}
               </Typography>
             )}
             {data && data.total_count === 0 && (
@@ -92,7 +97,7 @@ const HomePage = () => {
               gitUsers.map((user) => (
                 <div
                   key={user.id}
-                  className="flex items-center gap-3 bg-amber-300/45 p-2 rounded-md w-full"
+                  className="flex items-center gap-4 bg-amber-300/45 p-2 rounded-md w-full"
                 >
                   <img
                     src={user.avatar_url}
@@ -103,19 +108,22 @@ const HomePage = () => {
                 </div>
               ))}
             {data && data.total_count > 30 && (
-              <div className="flex gap-2">
+              <div className="flex gap-4 items-center justify-center w-full relative">
+                <div className="flex gap-2">      
                 <Button
-                  onClick={() => setPage((prev) => prev - 1)}
+                  onClick={() => { setPage((prev) => prev - 1), mutation.mutate() }}
                   disabled={page === 1}
                 >
                   Previous
                 </Button>
                 <Button
-                  onClick={() => setPage((prev) => prev + 1)}
+                  onClick={() => { setPage((prev) => prev + 1), mutation.mutate() }}
                   disabled={page === totalPage}
                 >
                   Next
                 </Button>
+                </div>
+                <Typography variant="p" className="place-self-center absolute right-0">Page {page} of {totalPage}</Typography>
               </div>
             )}
           </div>
