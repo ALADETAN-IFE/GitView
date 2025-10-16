@@ -21,7 +21,7 @@ const HomePage = () => {
 
   // Queries
   const { isPending, isError, data, error } = useQuery({
-  queryKey: ["usernameFetch", debouncedUsername],
+  queryKey: ["usernameFetch", debouncedUsername, page],
   queryFn: async () => { 
     return searchUsers(debouncedUsername, page).then((data) => {
       setTimeout(() => setTotalPage(Math.ceil(data?.total_count / 10)), 1000);
@@ -42,7 +42,7 @@ const HomePage = () => {
 
   // Mutations
   const mutation = useMutation({
-    mutationFn: () => searchUsers(debouncedUsername, page),
+    mutationFn: () => searchUsers(username, page),
     onSuccess: () => {
       // Invalidate and refetch
       queryClient.invalidateQueries({ queryKey: ["usernameFetch"] });
@@ -112,13 +112,13 @@ const HomePage = () => {
               <div className="flex gap-4 items-center justify-center w-full relative">
                 <div className="flex gap-2">      
                 <Button
-                  onClick={() => { setPage((prev) => prev - 1), mutation.mutate() }}
+                  onClick={() => setPage((prev) => prev - 1)}
                   disabled={page === 1}
                 >
                   Previous
                 </Button>
                 <Button
-                  onClick={() => { setPage((prev) => prev + 1), mutation.mutate() }}
+                  onClick={() => setPage((prev) => prev + 1)}
                   disabled={page === totalPage}
                 >
                   Next
