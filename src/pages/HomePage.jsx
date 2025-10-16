@@ -90,7 +90,7 @@ const HomePage = () => {
               <Typography variant="p">No users found.</Typography>
             )}
             {data && data.items && data.total_count >= 1 && (
-              <Typography variant="p">
+              <Typography variant="p" className="w-full text-left">
                 {data.total_count} users found.
               </Typography>
             )}
@@ -108,7 +108,7 @@ const HomePage = () => {
                   <Typography variant="p">{user.login}</Typography>
                 </div>
               ))}
-            {data && data.total_count > 30 && (
+            {data && data.total_count > 10 && (
               <div className="flex gap-4 items-center justify-center w-full relative">
                 <div className="flex gap-2">      
                 <Button
