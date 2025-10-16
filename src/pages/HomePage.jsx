@@ -54,7 +54,7 @@ const HomePage = () => {
   return (
     <div className="flex flex-col justify-center items-center">
       <div className="flex flex-col items-center justify-center max-w-2xl gap-6">
-        <Typography variant="h1">GitView: A GitHub Explorer</Typography>
+        <Typography variant="h1" className="text-center">GitView: A GitHub Explorer</Typography>
         <Typography variant="p" className="text-center">
           A modern GitHub user and repository explorer built with **React
           Query**, optimized for API caching, background refetching, and fast
