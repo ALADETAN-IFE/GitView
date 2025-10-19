@@ -74,7 +74,7 @@ const HomePage = () => {
           Query</b>, optimized for API caching, background refetching, and fast
           performance.
         </Typography>
-        <div className="flex w-full gap-4 justify-center">
+        <div className="flex w-full gap-4 justify-center @max-xs:flex-col">
           <Input
             placeholder="Search for users by name or username..."
             type="text"
