@@ -66,7 +66,7 @@ const HomePage = () => {
 
   const gitUsers = data?.items || [];
   return (
-    <div className="flex flex-col justify-center items-center gap-4 w-full max-w-[100rem]">
+    <div className="flex flex-col justify-center items-center gap-4 w-full max-w-[100rem] h-fit">
       <div className="flex flex-col items-center justify-center max-w-2xl gap-6">
         <Typography variant="h1" className="text-center">GitView: A GitHub Explorer</Typography>
         <Typography variant="p" className="text-center">
@@ -106,7 +106,7 @@ const HomePage = () => {
             )}
             {data && data.items && data.total_count >= 1 && (
               <Typography variant="p" className="w-full text-left">
-                {data.total_count} users found.
+                {data.total_count} {data.total_count > 1 ? "users" : "user"} found.
               </Typography>
             )}
             {data &&
