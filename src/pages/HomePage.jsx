@@ -5,14 +5,15 @@ import { useState, useEffect } from "react";
 import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { searchUsers } from "../api/github";
 import useDebounce from "../hooks/debounce";
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
   const [username, setUsername] = useState("");
   const [page, setPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
   const [retryTime, setRetryTime] = useState(60);
-  // console.log("Page:", page);
-  // console.log("Total Pages:", totalPage);
+
+  const navigate = useNavigate();
 
   // Debounce the username input to limit API calls on every keystroke
   const debouncedUsername = useDebounce(username, 500);
@@ -26,20 +27,16 @@ const HomePage = () => {
   queryFn: async () => { 
     return searchUsers(debouncedUsername, page).then((data) => {
       setTimeout(() => setTotalPage(Math.ceil(data?.total_count / 10)), 1000);
-      // console.log("Fetched Data:", data); 
       return data;
     });
   },
     // enabled: !!username, // Only run the query if username is not empty
-    onSuccess: (data) => {
-      if (data && data.total_count) {
-        setTotalPage(Math.floor(data.total_count / 10)); // GitHub API returns 10 results per page
-      }
-    }
+    // onSuccess: (data) => {
+    //   if (data && data.total_count) {
+    //     setTotalPage(Math.floor(data.total_count / 10)); 
+    //   }
+    // }
   });
-  
-  // console.log("IsError:", isError);
-  // console.log("Error:", error);
 
   useEffect(() => {
     // If there is no rate limit error, reset retryTime and do nothing
@@ -69,7 +66,7 @@ const HomePage = () => {
 
   const gitUsers = data?.items || [];
   return (
-    <div className="flex flex-col justify-center items-center gap-4">
+    <div className="flex flex-col justify-center items-center gap-4 w-full max-w-[100rem]">
       <div className="flex flex-col items-center justify-center max-w-2xl gap-6">
         <Typography variant="h1" className="text-center">GitView: A GitHub Explorer</Typography>
         <Typography variant="p" className="text-center">
@@ -79,11 +76,11 @@ const HomePage = () => {
         </Typography>
         <div className="flex w-full gap-4 justify-center">
           <Input
-            placeholder="Search for users by name/username..."
+            placeholder="Search for users by name or username..."
             type="text"
             className="min-w-2xs"
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={(e) => { setPage(1),setUsername(e.target.value) }}
           />
           <Button onClick={() => mutation.mutate()} disabled={!isError}>Search</Button>
         </div>
@@ -97,7 +94,7 @@ const HomePage = () => {
       {isPending ||
         isError ||
         data?.total_count >= 0 ? (
-          <div className="flex flex-col items-center justify-center w-full md:w-2xl gap-6 bg-amber-50/35 rounded-md p-2">
+          <div className="flex flex-col items-center justify-center w-full md:w-2xl gap-6 bg-amber-50/10 rounded-md p-2">
             {isPending && <Typography variant="p">Loading...</Typography>}
             {isError && (
               <Typography variant="p" className="text-center">
@@ -116,12 +113,16 @@ const HomePage = () => {
               gitUsers.map((user) => (
                 <div
                   key={user.id}
-                  className="flex items-center gap-4 bg-amber-300/45 p-2 rounded-md w-full"
+                  className="flex items-center gap-4 bg-amber-300/45 p-2 rounded-md w-full cursor-pointer hover:bg-amber-300/60"
+                  onClick={() => navigate(`/user/${user.login}`)}
+                  type="button"
                 >
                   <img
                     src={user.avatar_url}
                     alt={`${user.login}'s avatar`}
                     className="w-10 h-10 rounded-full"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <Typography variant="p">{user.login}</Typography>
                 </div>
